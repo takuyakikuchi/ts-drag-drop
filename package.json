@@ -1,0 +1,7 @@
+{
+  "name": "ts-drag-drop",
+  "version": "1.0.0",
+  "main": "app.js",
+  "author": "Takuya Kikuchi <kikuchi.takuya.dbce8@gmail.com>",
+  "license": "MIT"
+}
