@@ -1,3 +1,22 @@
+// ---------- Decorators -----------
+
+// Binding "this" keyword to method
+function autobind(
+  _: any,
+  _two: string,
+  descriptor: PropertyDescriptor
+) {
+  const originalMethod = descriptor.value;
+  const newMethod: PropertyDescriptor = {
+    get() {
+      const boundFunction = originalMethod.bind(this);
+      return boundFunction;
+    }
+  };
+  return newMethod;
+}
+
+// ************* Classes *****************
 class ProjectInput {
   templateElement: HTMLTemplateElement;
   hostDivElement: HTMLDivElement;
@@ -46,13 +65,14 @@ class ProjectInput {
     this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
   }
 
+  @autobind
   private submit(event: Event) {
     event.preventDefault();
     console.log(this.titleInput.value);
   }
 
   private configure() {
-    this.formElement.addEventListener("submit", this.submit.bind(this));
+    this.formElement.addEventListener("submit", this.submit);
   }
 }
 
