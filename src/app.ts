@@ -1,27 +1,58 @@
 class ProjectInput {
   templateElement: HTMLTemplateElement;
-  hostElement: HTMLDivElement;
-  element: HTMLFormElement;
+  hostDivElement: HTMLDivElement;
+  formElement: HTMLFormElement;
+  titleInput: HTMLFormElement;
+  descriptionInput: HTMLFormElement;
+  peopleInput: HTMLFormElement;
 
   constructor() {
-    // Copied Template element
-    this.templateElement = document.getElementById(
-      "project-input"
-    )! as HTMLTemplateElement;
+    // ----------- Variables -----------
 
-    // Div element where rendering will be done
-    this.hostElement = document.getElementById("app")! as HTMLDivElement;
+    // Template element to be copied
+    this.templateElement = 
+      document.getElementById("project-input")! as HTMLTemplateElement;
 
-    // Copying element
-    const newElement = document.importNode(this.templateElement.content, true);
+    // Div element where rendering to be done
+    this.hostDivElement = 
+      document.getElementById("app")! as HTMLDivElement;
 
-    // Element to be rendered
-    this.element = newElement.firstElementChild as HTMLFormElement;
+    // Form element to be rendered
+    const newFormElement = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.formElement = 
+      newFormElement.firstElementChild as HTMLFormElement;
+
+    this.titleInput = 
+      this.formElement.querySelector("#title")! as HTMLFormElement;
+
+    this.descriptionInput = 
+      this.formElement.querySelector("#description")! as HTMLFormElement;
+
+    this.peopleInput = 
+      this.formElement.querySelector("#people")! as HTMLFormElement;
+
+    // ----------- Style -------------
+    this.formElement.id = "user-input"; // Form style
+
+    // ----------- Function call -------------
     this.renderElement();
+    this.configure(); // On submit event
   }
 
-  renderElement() {
-    this.hostElement.insertAdjacentElement("afterbegin", this.element);
+  private renderElement() {
+    this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
+  }
+
+  private submit(event: Event) {
+    event.preventDefault();
+    console.log(this.titleInput.value);
+  }
+
+  private configure() {
+    this.formElement.addEventListener("submit", this.submit.bind(this));
   }
 }
 
