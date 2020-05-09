@@ -2,6 +2,12 @@
   "name": "ts-drag-drop",
   "version": "1.0.0",
   "main": "app.js",
+  "scripts": {
+    "start": "lite-server"
+  },
   "author": "Takuya Kikuchi <kikuchi.takuya.dbce8@gmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "lite-server": "^2.5.4"
+  }
 }
