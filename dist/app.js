@@ -28,8 +28,8 @@ class ProjectInput {
         this.renderElement();
         this.configure();
     }
-    configure() {
-        this.formElement.addEventListener("submit", this.submit);
+    renderElement() {
+        this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
     }
     gatherUserInput() {
         const title = this.titleInput.value;
@@ -45,8 +45,10 @@ class ProjectInput {
             return [title, description, +people];
         }
     }
-    renderElement() {
-        this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
+    clearUserInput() {
+        this.titleInput.value = "";
+        this.descriptionInput.value = "";
+        this.peopleInput.value = "";
     }
     submit(event) {
         event.preventDefault();
@@ -54,7 +56,11 @@ class ProjectInput {
         if (Array.isArray(userInput)) {
             const [title, description, people] = userInput;
             console.log(title, description, people);
+            this.clearUserInput();
         }
+    }
+    configure() {
+        this.formElement.addEventListener("submit", this.submit);
     }
 }
 __decorate([

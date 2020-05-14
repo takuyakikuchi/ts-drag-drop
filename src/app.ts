@@ -1,4 +1,4 @@
-// ---------- Decorators -----------
+// ************ Decorators *************
 
 // Binding "this" keyword to method
 function autobind(_: any, _two: string, descriptor: PropertyDescriptor) {
@@ -59,8 +59,10 @@ class ProjectInput {
     this.configure(); // On submit event
   }
 
-  private configure() {
-    this.formElement.addEventListener("submit", this.submit);
+  // ************* Functions **************
+
+  private renderElement() {
+    this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
   }
 
   private gatherUserInput(): [string, string, number] | void {
@@ -81,8 +83,10 @@ class ProjectInput {
     }
   }
 
-  private renderElement() {
-    this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
+  private clearUserInput(): void {
+    this.titleInput.value = "";
+    this.descriptionInput.value = "";
+    this.peopleInput.value = "";
   }
 
   @autobind // Binding "this"
@@ -92,8 +96,14 @@ class ProjectInput {
 
     if (Array.isArray(userInput)) {
       const [title, description, people] = userInput;
-      console.log(title, description, people);
+      console.log(title, description, people); // [TODO]: Will remove
+      this.clearUserInput();
     }
+  }
+
+  // Event listener
+  private configure() {
+    this.formElement.addEventListener("submit", this.submit);
   }
 }
 
