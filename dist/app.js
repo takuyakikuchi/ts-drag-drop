@@ -11,38 +11,50 @@ function autobind(_, _two, descriptor) {
         get() {
             const boundFunction = originalMethod.bind(this);
             return boundFunction;
-        }
+        },
     };
     return newMethod;
 }
 class ProjectInput {
     constructor() {
-        this.templateElement =
-            document.getElementById("project-input");
-        this.hostDivElement =
-            document.getElementById("app");
+        this.templateElement = document.getElementById("project-input");
+        this.hostDivElement = document.getElementById("app");
         const newFormElement = document.importNode(this.templateElement.content, true);
-        this.formElement =
-            newFormElement.firstElementChild;
-        this.titleInput =
-            this.formElement.querySelector("#title");
-        this.descriptionInput =
-            this.formElement.querySelector("#description");
-        this.peopleInput =
-            this.formElement.querySelector("#people");
+        this.formElement = newFormElement.firstElementChild;
+        this.titleInput = this.formElement.querySelector("#title");
+        this.descriptionInput = this.formElement.querySelector("#description");
+        this.peopleInput = this.formElement.querySelector("#people");
         this.formElement.id = "user-input";
         this.renderElement();
         this.configure();
+    }
+    configure() {
+        this.formElement.addEventListener("submit", this.submit);
+    }
+    gatherUserInput() {
+        const title = this.titleInput.value;
+        const description = this.descriptionInput.value;
+        const people = this.peopleInput.value;
+        if (title.trim().length === 0 ||
+            description.trim().length === 0 ||
+            people.trim().length === 0) {
+            alert("Invalid input! Please fill the inputs");
+            return;
+        }
+        else {
+            return [title, description, +people];
+        }
     }
     renderElement() {
         this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
     }
     submit(event) {
         event.preventDefault();
-        console.log(this.titleInput.value);
-    }
-    configure() {
-        this.formElement.addEventListener("submit", this.submit);
+        const userInput = this.gatherUserInput();
+        if (Array.isArray(userInput)) {
+            const [title, description, people] = userInput;
+            console.log(title, description, people);
+        }
     }
 }
 __decorate([
