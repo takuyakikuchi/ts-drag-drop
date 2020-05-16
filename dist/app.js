@@ -103,5 +103,28 @@ class ProjectInput {
 __decorate([
     autobind
 ], ProjectInput.prototype, "submit", null);
+class ProjectList {
+    constructor(type) {
+        this.type = type;
+        this.templateElement = document.getElementById("project-list");
+        this.hostDivElement = document.getElementById("app");
+        const newSectionElement = document.importNode(this.templateElement.content, true);
+        this.sectionElement = newSectionElement.firstElementChild;
+        this.sectionElement.id = `${this.type}-projects`;
+        this.renderElement();
+        this.renderContent();
+    }
+    renderContent() {
+        const listId = `${this.type}-projects-list`;
+        this.sectionElement.querySelector("ul").id = listId;
+        this.sectionElement.querySelector("h2").textContent =
+            this.type.toUpperCase() + " PROJECTS";
+    }
+    renderElement() {
+        this.hostDivElement.insertAdjacentElement("beforeend", this.sectionElement);
+    }
+}
 const projectInput = new ProjectInput();
+const activeProjectList = new ProjectList("active");
+const finishedProjectList = new ProjectList("finished");
 //# sourceMappingURL=app.js.map

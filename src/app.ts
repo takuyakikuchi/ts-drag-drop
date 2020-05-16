@@ -12,7 +12,7 @@ function autobind(_: any, _two: string, descriptor: PropertyDescriptor) {
   return newMethod;
 }
 
-//  ************** Validation **************
+// ************* Input Validation *************
 interface Validatable {
   // Interface is for syntactical contract
   value: string | number;
@@ -50,7 +50,7 @@ function validation(input: Validatable) {
   return isValid;
 }
 
-// ************* Classes *****************
+// ************* ProjectInput Class *****************
 class ProjectInput {
   templateElement: HTMLTemplateElement;
   hostDivElement: HTMLDivElement;
@@ -97,7 +97,7 @@ class ProjectInput {
     this.configure(); // On submit event
   } // Constructor ends
 
-  // ************* Class methods **************
+  // --------------- ProjectInput class methods ---------------
 
   private renderElement() {
     this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
@@ -108,7 +108,7 @@ class ProjectInput {
     const description = this.descriptionInput.value;
     const people = this.peopleInput.value;
 
-    // -------------- Validation --------------
+    // Validation
     const titleValidatable: Validatable = {
       value: title,
       required: true,
@@ -165,4 +165,50 @@ class ProjectInput {
   }
 }
 
+// ************* ProjectList Class *****************
+class ProjectList {
+  templateElement: HTMLTemplateElement;
+  hostDivElement: HTMLDivElement;
+  sectionElement: HTMLElement;
+
+  constructor(private type: "active" | "finished") {
+    // ----------- Variables -----------
+
+    // Template element to be copied
+    this.templateElement = document.getElementById(
+      "project-list"
+    )! as HTMLTemplateElement;
+
+    // Div element where rendering to be done
+    this.hostDivElement = document.getElementById("app")! as HTMLDivElement;
+
+    // Section element to be rendered
+    const newSectionElement = document.importNode(
+      this.templateElement.content,
+      true
+    );
+    this.sectionElement = newSectionElement.firstElementChild as HTMLElement;
+    this.sectionElement.id = `${this.type}-projects`;
+
+    // ------------- Function call --------------
+    this.renderElement();
+    this.renderContent();
+  }
+
+  // ----------- ProjectList methods ------------
+
+  private renderContent() {
+    const listId = `${this.type}-projects-list`;
+    this.sectionElement.querySelector("ul")!.id = listId;
+    this.sectionElement.querySelector("h2")!.textContent =
+      this.type.toUpperCase() + " PROJECTS";
+  }
+
+  private renderElement() {
+    this.hostDivElement.insertAdjacentElement("beforeend", this.sectionElement);
+  }
+}
+
 const projectInput = new ProjectInput();
+const activeProjectList = new ProjectList("active");
+const finishedProjectList = new ProjectList("finished");
