@@ -50,10 +50,27 @@ function validation(input: Validatable) {
   return isValid;
 }
 
+// ************* Project Class **************
+enum ProjectStatus {
+  Active,
+  Finished,
+}
+class Project {
+  constructor(
+    public id: string,
+    public title: string,
+    public description: string,
+    public people: number,
+    public status: ProjectStatus
+  ) {}
+}
+
 // ************* ProjectState Class *****************
+
+type Listener = (items: Project[]) => void;
 class ProjectState {
-  private listeners: any[] = []; // Subscription
-  private projects: any[] = [];
+  private listeners: Listener[] = []; // Subscription
+  private projects: Project[] = [];
   private static instance: ProjectState; // To make it accessible as class property
 
   static getInstance() {
@@ -64,17 +81,18 @@ class ProjectState {
     return this.instance;
   }
 
-  addListener(listenerFn: Function) {
+  addListener(listenerFn: Listener) {
     this.listeners.push(listenerFn);
   }
 
   addProject(title: string, description: string, numOfPeople: number) {
-    const newProject = {
-      id: Math.random().toString(),
-      title: title,
-      description: description,
-      people: numOfPeople,
-    };
+    const newProject = new Project(
+      Math.random().toString(),
+      title,
+      description,
+      numOfPeople,
+      ProjectStatus.Active
+    );
     this.projects.push(newProject);
     for (const listenerFn of this.listeners) {
       listenerFn(this.projects.slice()); // Copy of array
@@ -204,7 +222,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement;
   hostDivElement: HTMLDivElement;
   sectionElement: HTMLElement;
-  assignedProjects: any[];
+  assignedProjects: Project[];
 
   constructor(private type: "active" | "finished") {
     // ----------- Variables -----------
@@ -226,7 +244,7 @@ class ProjectList {
     this.sectionElement.id = `${this.type}-projects`;
 
     this.assignedProjects = [];
-    projectState.addListener((projects: any[]) => {
+    projectState.addListener((projects: Project[]) => {
       // Overwriting projects
       this.assignedProjects = projects;
       this.renderProjects();
