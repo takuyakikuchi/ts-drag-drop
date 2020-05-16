@@ -50,6 +50,40 @@ function validation(input: Validatable) {
   return isValid;
 }
 
+// ************* ProjectState Class *****************
+class ProjectState {
+  private listeners: any[] = []; // Subscription
+  private projects: any[] = [];
+  private static instance: ProjectState; // To make it accessible as class property
+
+  static getInstance() {
+    if (this.instance) {
+      return this.instance;
+    }
+    this.instance = new ProjectState();
+    return this.instance;
+  }
+
+  addListener(listenerFn: Function) {
+    this.listeners.push(listenerFn);
+  }
+
+  addProject(title: string, description: string, numOfPeople: number) {
+    const newProject = {
+      id: Math.random().toString(),
+      title: title,
+      description: description,
+      people: numOfPeople,
+    };
+    this.projects.push(newProject);
+    for (const listenerFn of this.listeners) {
+      listenerFn(this.projects.slice()); // Copy of array
+    }
+  }
+}
+
+const projectState = ProjectState.getInstance();
+
 // ************* ProjectInput Class *****************
 class ProjectInput {
   templateElement: HTMLTemplateElement;
@@ -154,7 +188,7 @@ class ProjectInput {
 
     if (Array.isArray(userInput)) {
       const [title, description, people] = userInput;
-      console.log(title, description, people); // [TODO]: Will remove
+      projectState.addProject(title, description, people);
       this.clearUserInput();
     }
   }
@@ -170,6 +204,7 @@ class ProjectList {
   templateElement: HTMLTemplateElement;
   hostDivElement: HTMLDivElement;
   sectionElement: HTMLElement;
+  assignedProjects: any[];
 
   constructor(private type: "active" | "finished") {
     // ----------- Variables -----------
@@ -190,12 +225,31 @@ class ProjectList {
     this.sectionElement = newSectionElement.firstElementChild as HTMLElement;
     this.sectionElement.id = `${this.type}-projects`;
 
+    this.assignedProjects = [];
+    projectState.addListener((projects: any[]) => {
+      // Overwriting projects
+      this.assignedProjects = projects;
+      this.renderProjects();
+    });
+
     // ------------- Function call --------------
     this.renderElement();
     this.renderContent();
   }
 
   // ----------- ProjectList methods ------------
+
+  private renderProjects() {
+    const listElement = document.getElementById(
+      `${this.type}-projects-list`
+    )! as HTMLUListElement;
+
+    for (const projectItem of this.assignedProjects) {
+      const listItem = document.createElement("li");
+      listItem.textContent = projectItem.title;
+      listElement.appendChild(listItem);
+    }
+  }
 
   private renderContent() {
     const listId = `${this.type}-projects-list`;

@@ -36,6 +36,35 @@ function validation(input) {
     }
     return isValid;
 }
+class ProjectState {
+    constructor() {
+        this.listeners = [];
+        this.projects = [];
+    }
+    static getInstance() {
+        if (this.instance) {
+            return this.instance;
+        }
+        this.instance = new ProjectState();
+        return this.instance;
+    }
+    addListener(listenerFn) {
+        this.listeners.push(listenerFn);
+    }
+    addProject(title, description, numOfPeople) {
+        const newProject = {
+            id: Math.random().toString(),
+            title: title,
+            description: description,
+            people: numOfPeople,
+        };
+        this.projects.push(newProject);
+        for (const listenerFn of this.listeners) {
+            listenerFn(this.projects.slice());
+        }
+    }
+}
+const projectState = ProjectState.getInstance();
 class ProjectInput {
     constructor() {
         this.templateElement = document.getElementById("project-input");
@@ -92,7 +121,7 @@ class ProjectInput {
         const userInput = this.gatherUserInput();
         if (Array.isArray(userInput)) {
             const [title, description, people] = userInput;
-            console.log(title, description, people);
+            projectState.addProject(title, description, people);
             this.clearUserInput();
         }
     }
@@ -111,8 +140,21 @@ class ProjectList {
         const newSectionElement = document.importNode(this.templateElement.content, true);
         this.sectionElement = newSectionElement.firstElementChild;
         this.sectionElement.id = `${this.type}-projects`;
+        this.assignedProjects = [];
+        projectState.addListener((projects) => {
+            this.assignedProjects = projects;
+            this.renderProjects();
+        });
         this.renderElement();
         this.renderContent();
+    }
+    renderProjects() {
+        const listElement = document.getElementById(`${this.type}-projects-list`);
+        for (const projectItem of this.assignedProjects) {
+            const listItem = document.createElement("li");
+            listItem.textContent = projectItem.title;
+            listElement.appendChild(listItem);
+        }
     }
     renderContent() {
         const listId = `${this.type}-projects-list`;
