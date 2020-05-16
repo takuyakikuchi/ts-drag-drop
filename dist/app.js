@@ -15,6 +15,27 @@ function autobind(_, _two, descriptor) {
     };
     return newMethod;
 }
+function validation(input) {
+    let isValid = true;
+    if (input.required) {
+        isValid = isValid && input.value.toString().trim().length !== 0;
+    }
+    if (input.minLength !== null && typeof input.minLength === "string") {
+        isValid =
+            isValid && input.value.toString().trim().length >= input.minLength;
+    }
+    if (input.maxLength !== null && typeof input.maxLength === "string") {
+        isValid =
+            isValid && input.value.toString().trim().length <= input.maxLength;
+    }
+    if (input.min !== null && typeof input.min === "number") {
+        isValid = isValid && input.value >= input.min;
+    }
+    if (input.min !== null && typeof input.max === "number") {
+        isValid = isValid && input.value <= input.max;
+    }
+    return isValid;
+}
 class ProjectInput {
     constructor() {
         this.templateElement = document.getElementById("project-input");
@@ -35,9 +56,25 @@ class ProjectInput {
         const title = this.titleInput.value;
         const description = this.descriptionInput.value;
         const people = this.peopleInput.value;
-        if (title.trim().length === 0 ||
-            description.trim().length === 0 ||
-            people.trim().length === 0) {
+        const titleValidatable = {
+            value: title,
+            required: true,
+            minLength: 1,
+        };
+        const descriptionValidatable = {
+            value: description,
+            required: true,
+            minLength: 1,
+        };
+        const peopleValidatable = {
+            value: people,
+            required: true,
+            min: 1,
+            max: 10,
+        };
+        if (!validation(titleValidatable) ||
+            !validation(descriptionValidatable) ||
+            !validation(peopleValidatable)) {
             alert("Invalid input! Please fill the inputs");
             return;
         }

@@ -12,6 +12,44 @@ function autobind(_: any, _two: string, descriptor: PropertyDescriptor) {
   return newMethod;
 }
 
+//  ************** Validation **************
+interface Validatable {
+  // Interface is for syntactical contract
+  value: string | number;
+  required?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  min?: number;
+  max?: number;
+}
+
+function validation(input: Validatable) {
+  let isValid = true;
+  if (input.required) {
+    // Check if input is not empty
+    isValid = isValid && input.value.toString().trim().length !== 0;
+  }
+  if (input.minLength !== null && typeof input.minLength === "string") {
+    // Check if input has greater length than minLength
+    isValid =
+      isValid && input.value.toString().trim().length >= input.minLength;
+  }
+  if (input.maxLength !== null && typeof input.maxLength === "string") {
+    // Check if input has greater length than maxLength
+    isValid =
+      isValid && input.value.toString().trim().length <= input.maxLength;
+  }
+  if (input.min !== null && typeof input.min === "number") {
+    // Check if input has greater than min
+    isValid = isValid && input.value >= input.min;
+  }
+  if (input.min !== null && typeof input.max === "number") {
+    // Check if input has less than max
+    isValid = isValid && input.value <= input.max;
+  }
+  return isValid;
+}
+
 // ************* Classes *****************
 class ProjectInput {
   templateElement: HTMLTemplateElement;
@@ -57,9 +95,9 @@ class ProjectInput {
     // ----------- Function call -------------
     this.renderElement();
     this.configure(); // On submit event
-  }
+  } // Constructor ends
 
-  // ************* Functions **************
+  // ************* Class methods **************
 
   private renderElement() {
     this.hostDivElement.insertAdjacentElement("afterbegin", this.formElement);
@@ -70,10 +108,30 @@ class ProjectInput {
     const description = this.descriptionInput.value;
     const people = this.peopleInput.value;
 
+    // -------------- Validation --------------
+    const titleValidatable: Validatable = {
+      value: title,
+      required: true,
+      minLength: 1,
+    };
+
+    const descriptionValidatable: Validatable = {
+      value: description,
+      required: true,
+      minLength: 1,
+    };
+
+    const peopleValidatable: Validatable = {
+      value: people,
+      required: true,
+      min: 1,
+      max: 10,
+    };
+
     if (
-      title.trim().length === 0 ||
-      description.trim().length === 0 ||
-      people.trim().length === 0
+      !validation(titleValidatable) ||
+      !validation(descriptionValidatable) ||
+      !validation(peopleValidatable)
     ) {
       // Validation handling
       alert("Invalid input! Please fill the inputs");
