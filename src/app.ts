@@ -270,6 +270,8 @@ class ProjectList {
       `${this.type}-projects-list`
     )! as HTMLUListElement;
 
+    listElement.innerHTML = ""; // To avoid duplication
+
     for (const projectItem of this.assignedProjects) {
       const listItem = document.createElement("li");
       listItem.textContent = projectItem.title;
