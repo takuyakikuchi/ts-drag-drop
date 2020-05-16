@@ -245,8 +245,16 @@ class ProjectList {
 
     this.assignedProjects = [];
     projectState.addListener((projects: Project[]) => {
+      const relevantProjects = projects.filter((project) => {
+        // "this" is ProjectList
+        if (this.type === "active") {
+          return project.status === ProjectStatus.Active;
+        } else {
+          return project.status === ProjectStatus.Finished;
+        }
+      });
       // Overwriting projects
-      this.assignedProjects = projects;
+      this.assignedProjects = relevantProjects;
       this.renderProjects();
     });
 
