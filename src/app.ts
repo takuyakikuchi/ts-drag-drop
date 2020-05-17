@@ -267,9 +267,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     listElement.innerHTML = ""; // To avoid duplication
 
     for (const projectItem of this.assignedProjects) {
-      const listItem = document.createElement("li");
-      listItem.textContent = projectItem.title;
-      listElement.appendChild(listItem);
+      new ProjectItem(this.element.querySelector("ul")!.id, projectItem);
     }
   }
 
@@ -278,6 +276,30 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     this.element.querySelector("ul")!.id = listId;
     this.element.querySelector("h2")!.textContent =
       this.type.toUpperCase() + " PROJECTS";
+  }
+}
+
+// ************* ProjectItem Class *****************
+class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
+  private project: Project;
+
+  constructor(hostId: string, project: Project) {
+    // @args(templateElementId, hostElementId, insertAtBegging, newElementId)
+    super("single-project", hostId, false, project.id);
+    this.project = project;
+
+    this.configure();
+    this.renderContent();
+  }
+
+  configure() {}
+
+  renderContent() {
+    this.element.querySelector("h2")!.textContent = this.project.title;
+    this.element.querySelector(
+      "h3"
+    )!.textContent = this.project.people.toString();
+    this.element.querySelector("p")!.textContent = this.project.description;
   }
 }
 
