@@ -222,7 +222,7 @@ class ProjectInput extends Component<HTMLDivElement, HTMLFormElement> {
   }
 
   // Event listener
-  private configure() {
+  configure() {
     this.element.addEventListener("submit", this.submit);
   }
 }
@@ -271,7 +271,7 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
     }
   }
 
-  private renderContent() {
+  renderContent() {
     const listId = `${this.type}-projects-list`;
     this.element.querySelector("ul")!.id = listId;
     this.element.querySelector("h2")!.textContent =
@@ -282,6 +282,14 @@ class ProjectList extends Component<HTMLDivElement, HTMLElement> {
 // ************* ProjectItem Class *****************
 class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
   private project: Project;
+
+  get persons() {
+    if (this.project.people === 1) {
+      return "1 person";
+    } else {
+      return `${this.project.people} persons`;
+    }
+  }
 
   constructor(hostId: string, project: Project) {
     // @args(templateElementId, hostElementId, insertAtBegging, newElementId)
@@ -296,9 +304,7 @@ class ProjectItem extends Component<HTMLUListElement, HTMLLIElement> {
 
   renderContent() {
     this.element.querySelector("h2")!.textContent = this.project.title;
-    this.element.querySelector(
-      "h3"
-    )!.textContent = this.project.people.toString();
+    this.element.querySelector("h3")!.textContent = this.persons;
     this.element.querySelector("p")!.textContent = this.project.description;
   }
 }
