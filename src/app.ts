@@ -71,6 +71,7 @@ class Project {
 
 // ************* Project state management *****************
 
+// T: Project
 type Listener<T> = (items: T[]) => void;
 
 // T: Project
