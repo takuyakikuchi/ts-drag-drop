@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
-    "start": "lite-server",
+    "start": "webpack-dev-server",
     "build": "webpack"
   },
   "author": "Takuya Kikuchi <kikuchi.takuya.dbce8@gmail.com>",
